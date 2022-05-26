@@ -1,0 +1,177 @@
+{% extends '_base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block custom_style %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script>
+        function validateForm(){
+            let id = document.getElementById('id_person_id').value;
+            if(id.length != 13){ 
+                alert("กรอกบัตรประชาชนไม่ถูกต้อง");
+                return false;}
+            for(i=0, sum=0; i < 12; i++){
+                sum += parseFloat(id.charAt(i))*(13-i);} 
+            if((11-sum%11)%10!=parseFloat(id.charAt(12))){
+                alert("กรอกไม่บัตรประชาชนไม่ถูกต้อง");
+                return false; }
+            return true;}
+            {% comment %} $(document).ready(function(){
+                $('#idcard').on('keyup',function(){
+                  if($.trim($(this).val()) != '' && $(this).val().length == 13){
+                    id = $(this).val().replace(/-/g,"");
+                    var result = Script_checkID(id);
+                    if(result === false){
+                      $('span.error').removeClass('true').text('เลขบัตรผิด');
+                    }else{
+                      $('span.error').addClass('true').text('เลขบัตรถูกต้อง');
+                    }
+                  }else{
+                    $('span.error').removeClass('true').text('');
+                  
+                  }
+                })
+              });
+              
+              function Script_checkID(){
+                let id = document.getElementById('id_person_id').value;
+                if(!IsNumeric(id)) return false;ส
+                if(id.substring(0,1)== 0) return false;
+                if(id.length != 13) return false;
+                for(i=0, sum=0; i < 12; i++)
+                    sum += parseFloat(id.charAt(i))*(13-i);
+                if((11-sum%11)%10!=parseFloat(id.charAt(12))) return false;
+                return true;
+              }
+              function IsNumeric(input){
+                  var RE = /^-?(0|INF|(0[1-7][0-7]*)|(0x[0-9a-fA-F]+)|((0|[1-9][0-9]*|(?=[\.,]))([\.,][0-9]+)?([eE]-?\d+)?))$/;
+                  return (RE.test(input));
+              } {% endcomment %}
+    </script>
+{% endblock %}
+
+
+{% block content %}
+<div class="container">        
+    {% if form.errors %}
+    {% for field in form %}
+        {% for error in field.errors %} 
+        <div class="alert alert-danger">
+            <strong>{{ field.name }} {{ error|escape }}</strong>
+        </div>
+        {% endfor %}
+        {% endfor %}
+        {% endif %}
+        
+        <form method="post" onsubmit="return validateForm()">
+            {% csrf_token %}
+           
+                
+            <div class="row mt-3 ">
+                <div class="d-flex justify-content-between">
+                    <div >
+                        <h3 >{{ title }} ขรก.ติดเชื้อ COVID </h3>
+                    </div>
+                    <div >
+                        <button type="button"  class="btn btn-secondary px-3" onclick="javascript:location.href='{% url 'Patient:List'%}'"><i class="fa-solid fa-arrow-left-long"></i></i> กลับ </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row bg-primary text-white mt-2">
+                <div class="col-12 p-1">
+                    <h4>ข้อมูลพื้นฐานทั่วไป</h4>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-4 col-md-4 col-lg-3 col-xl-2">
+                    {{ form.person_id | as_crispy_field }}
+                </div>
+                <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                    {{ form.gender | as_crispy_field }}
+                </div>
+                <div class="col-6 col-sm-4 col-md-3  col-lg-2 col-xl-2">
+                    {{ form.rank | as_crispy_field }}              
+                </div>
+                <div class="col-sm-8 col-md-8  col-lg-5 col-xl-3">
+                    {{ form.full_name | as_crispy_field }}              
+                </div>
+                <div class="col-6 col-sm-4 col-md-3 col-lg-3">
+                    {{ form.birth_day | as_crispy_field }}              
+                </div>
+                <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                    {{ form.unit | as_crispy_field }}
+                </div>
+                <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                    {{ form.airforce_type | as_crispy_field }}
+                </div>            
+                <div class="col-sm-4 col-md-5 col-lg-3">
+                    {{ form.mobile | as_crispy_field }}
+                </div>
+                <div class="col-md-6  col-lg-5">
+                    {{ form.address | as_crispy_field }}              
+                </div>
+                <div class="col-md-4 col-lg-3">
+                    {{ form.right_medical | as_crispy_field }}              
+                </div>
+                <div class="col-md-4 col-lg-4">
+                    {{ form.emergency_name | as_crispy_field }}
+                </div>
+            <div class="col-md-4 col-lg-3">
+                {{ form.emergency_mobile | as_crispy_field }}
+            </div>
+            
+        </div>
+        <div class="row bg-warning text-dark mt-2">
+            <div class="col-12 p-1">
+                <h4>ข้อมูลสุขภาพและการรักษา</h4>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-4 col-sm-4 col-md-4 col-lg-1">
+                {{ form.blood_group | as_crispy_field }}
+            </div>
+            <div class="col-4 col-sm-4 col-md-4  col-lg-1">
+                {{ form.height | as_crispy_field }}              
+            </div>
+            <div class="col-4 col-sm-4 col-md-4 col-lg-1">
+                {{ form.weight | as_crispy_field }}              
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-4">
+                {{ form.disease | as_crispy_field }}
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-5">
+                {{ form.drug_allergy | as_crispy_field }}
+            </div>           
+        </div>
+        <div class="row">
+            <div class="col-6 col-sm-6 col-md-4 col-lg-2">
+                {{ form.atk_date | as_crispy_field }}
+            </div>
+            <div class="col-md-12 col-lg-3">
+                {{ form.atk_place | as_crispy_field }}              
+            </div>
+            <div class="col-6 col-sm-6 col-md-4  col-lg-2">
+                {{ form.rt_pcr | as_crispy_field }}              
+            </div>
+            <div class="col-md-12 col-lg-3">
+                {{ form.rt_pcr_place | as_crispy_field }}              
+            </div>
+            <div class="col-sm-6 col-md-6 col-lg-2">
+                {{ form.status | as_crispy_field }}              
+            </div>
+            <div class="col-sm-6 col-md-6 col-lg-2">
+                {{ form.treatment | as_crispy_field }}
+            </div>
+            <div class="col-md-12 col-lg-5">
+                {{ form.symptom | as_crispy_field }}              
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-12 col-lg-12 text-end">
+                <button type="submit" class="btn btn-primary px-3 py-2" onclick="return confirm('ยืนยันส่งข้อมูล?')"><i class="fa fa-save"></i> บันทึก</button>                
+            </div>
+        </div>
+        {% comment %} {{ form | crispy }} {% endcomment %}
+    </form>
+</div>
+    {% endblock %}
